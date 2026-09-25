@@ -3,6 +3,8 @@ const img = (hash) =>
 
 export const HERO_IMAGE = img("570592fa30b73e43af822a5e3d93e28b0ca2e312d03df610450b69eaaa05624a");
 
+export const HERO_PNG = "/hero-headset.png";
+
 export const AUTHORS = [
   {
     id: "elena-vance",

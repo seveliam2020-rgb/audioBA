@@ -1,27 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Globe, Pause, Play } from "lucide-react";
+import { ArrowDown, ArrowRight, Pause, Play } from "lucide-react";
 import WaveVisualizer from "./WaveVisualizer";
-import { BOOKS, HERO_IMAGE } from "../data/books";
+import { BOOKS, HERO_PNG } from "../data/books";
 import { scrollToSection } from "../lib/scroll";
-
-const lineReveal = {
-  hidden: { y: "115%" },
-  show: (i) => ({
-    y: "0%",
-    transition: { duration: 1.1, delay: 0.3 + i * 0.14, ease: [0.16, 1, 0.3, 1] },
-  }),
-};
-
-const SPECS = ["$1.99 / first 3 months", "1 book / month", "+ extra books $8.99"];
 
 export default function Hero() {
   const ref = useRef(null);
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const imgY = useTransform(scrollYProgress, [0, 1], [0, 90]);
-  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0.2]);
+  const stackY = useTransform(scrollYProgress, [0, 1], [0, 110]);
+  const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
   useEffect(() => () => audioRef.current?.pause(), []);
 
@@ -40,85 +30,78 @@ export default function Hero() {
   };
 
   return (
-    <section
-      ref={ref}
-      className="relative flex min-h-screen flex-col justify-center overflow-hidden pb-24 pt-32 lg:pt-36"
-    >
-      <div className="pointer-events-none absolute -top-48 left-1/4 h-[480px] w-[720px] rounded-full bg-ember/15 blur-[160px]" />
-      <div className="pointer-events-none absolute bottom-10 right-0 h-[380px] w-[560px] rounded-full bg-gold/10 blur-[150px]" />
+    <section ref={ref} className="relative flex min-h-screen flex-col overflow-hidden">
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-[460px] w-[760px] -translate-x-1/2 rounded-full bg-ember/15 blur-[160px]" />
+      <div className="pointer-events-none absolute bottom-0 right-0 h-[380px] w-[560px] rounded-full bg-gold/10 blur-[150px]" />
 
-      <div className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-16 px-6 lg:grid-cols-12 lg:gap-10 lg:px-10">
-        <motion.div style={{ opacity: fade }} className="lg:col-span-7">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
-            className="eyebrow flex items-center gap-3"
+      <motion.div
+        style={{ y: stackY, opacity: fade }}
+        className="relative flex flex-1 flex-col items-center justify-center px-6 pb-6 pt-28"
+      >
+        <div className="relative flex items-center justify-center">
+          <span className="glass absolute -top-5 left-1/2 z-20 hidden -translate-x-1/2 whitespace-nowrap rounded-full px-4 py-1.5 font-tech text-[10px] uppercase tracking-[0.3em] text-amber-500 md:block">
+            Audiobook distribution
+          </span>
+          <h1
+            data-testid="hero-wordmark"
+            className="relative z-0 select-none text-center font-display text-[clamp(4.5rem,16vw,13.5rem)] font-extrabold leading-none tracking-[-0.03em]"
           >
-            <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-ember" />
-            Booklab Authority presents
-          </motion.p>
-
-          <h1 className="mt-6 font-display text-[clamp(2.6rem,6.5vw,5.75rem)] font-extrabold leading-[0.98] tracking-tight text-white">
-            <span className="block overflow-hidden pb-1">
+            <span className="block overflow-hidden">
               <motion.span
-                custom={0}
-                variants={lineReveal}
-                initial="hidden"
-                animate="show"
-                className="block"
+                initial={{ y: "112%" }}
+                animate={{ y: "0%" }}
+                transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="block bg-gradient-to-b from-[#3a3a44] via-[#232329] to-[#101014] bg-clip-text text-transparent"
               >
-                Every great book,
+                BOOKLAB
               </motion.span>
             </span>
-            <span className="block overflow-hidden pb-3">
-              <motion.span
-                custom={1}
-                variants={lineReveal}
-                initial="hidden"
-                animate="show"
-                className="block"
-              >
-                in{" "}
-                <em className="font-serif-accent text-gradient-fire font-normal italic">
-                  your ears.
-                </em>
-              </motion.span>
-            </span>
+            <span className="sr-only">Booklab Audio — audiobooks from authors worldwide</span>
           </h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.75 }}
-            className="mt-6 max-w-xl text-base leading-relaxed text-neutral-400 sm:text-lg"
-          >
-            Booklab Audio distributes audiobooks from authors around the world — masterfully
-            narrated, in high-fidelity sound. One audiobook every month, your first three for
-            $1.99.
-          </motion.p>
-
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.9 }}
-            className="mt-9 flex flex-wrap items-center gap-4"
+            initial={{ opacity: 0, y: 60, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.3, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute inset-0 z-10 flex items-center justify-center"
           >
+            <img
+              src={HERO_PNG}
+              alt="Featured headphones of the Booklab Audio catalog"
+              data-testid="hero-headset"
+              draggable={false}
+              className="animate-float-slow w-[min(58vw,330px)] drop-shadow-[0_50px_90px_rgba(255,90,31,0.22)] md:w-[min(38vw,430px)]"
+            />
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 1.15 }}
+        className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-end gap-8 px-6 pb-16 md:grid-cols-3"
+      >
+        <div className="max-w-sm">
+          <p className="text-sm leading-relaxed text-neutral-400">
+            Audiobooks from authors around the world — masterfully narrated, in high-fidelity
+            sound.
+          </p>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
             <button
               data-testid="hero-waitlist-cta"
               onClick={() => scrollToSection("#waitlist")}
-              className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-ember to-gold px-7 py-3.5 font-display text-sm font-bold text-ink glow-ember transition-transform duration-300 hover:scale-[1.03]"
+              className="group inline-flex items-center gap-2.5 rounded-full bg-gradient-to-r from-ember to-gold px-6 py-3 font-display text-sm font-bold text-ink glow-ember transition-transform duration-300 hover:scale-[1.03]"
             >
               Claim 3 months for $1.99
-              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
             <button
               data-testid="hero-sample-audio-btn"
               onClick={toggleTeaser}
-              className="inline-flex items-center gap-3 rounded-full border border-white/15 px-6 py-3.5 text-sm font-medium text-neutral-200 transition-colors hover:border-ember/50 hover:text-white"
+              className="inline-flex items-center gap-2.5 rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-neutral-200 transition-colors hover:border-ember/50 hover:text-white"
             >
-              {playing ? <Pause size={15} /> : <Play size={15} />}
-              {playing ? "Playing preview" : "Listen to a preview"}
+              {playing ? <Pause size={14} /> : <Play size={14} />}
+              {playing ? "Playing" : "Preview"}
               {playing && (
                 <span className="flex h-4 items-end gap-[2px]">
                   {[0, 1, 2].map((i) => (
@@ -131,56 +114,34 @@ export default function Hero() {
                 </span>
               )}
             </button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.1 }}
-            className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-3"
-          >
-            {SPECS.map((s, i) => (
-              <span key={s} className="flex items-center gap-4">
-                <span className="font-tech text-[11px] uppercase tracking-[0.2em] text-neutral-500">
-                  {s}
-                </span>
-                {i < SPECS.length - 1 && <span className="h-1 w-1 rotate-45 bg-ember/60" />}
-              </span>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        <div className="relative lg:col-span-5">
-          <motion.div
-            style={{ y: imgY }}
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="relative"
-          >
-            <div className="absolute -inset-10 bg-gradient-to-br from-ember/25 via-transparent to-gold/20 opacity-60 blur-3xl" />
-            <img
-              src={HERO_IMAGE}
-              alt="Premium headphones with an amber waveform of light"
-              className="relative aspect-[4/3] w-full object-cover [mask-image:radial-gradient(115%_115%_at_50%_45%,black_55%,transparent_80%)]"
-            />
-            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink to-transparent" />
-
-            <div className="glass animate-float-slow absolute -bottom-4 -left-3 flex items-center gap-4 rounded-2xl px-5 py-4 sm:-left-6">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-ember">
-                <Globe size={18} />
-              </span>
-              <div>
-                <p className="font-tech text-[10px] uppercase tracking-[0.25em] text-amber-500">
-                  Global catalog
-                </p>
-                <p className="font-display text-sm font-bold text-white">Authors worldwide</p>
-                <p className="text-xs text-neutral-400">Curated for audio, by Booklab Authority</p>
-              </div>
-            </div>
-          </motion.div>
+          </div>
         </div>
-      </div>
+
+        <div className="hidden md:block">
+          <p className="text-center font-serif-accent text-lg italic text-neutral-300">
+            Precision narration. Global distribution.
+          </p>
+          <p className="mt-2 text-center font-tech text-[10px] uppercase tracking-[0.3em] text-neutral-600">
+            $1.99 / month — first 3 months
+          </p>
+        </div>
+
+        <div className="flex flex-col items-start gap-2 md:items-end">
+          <p className="font-tech text-[11px] uppercase tracking-[0.25em] text-neutral-400">
+            1 book / month
+          </p>
+          <p className="font-tech text-[11px] uppercase tracking-[0.25em] text-neutral-400">
+            + extra books $8.99
+          </p>
+          <button
+            data-testid="hero-browse-link"
+            onClick={() => scrollToSection("#catalog")}
+            className="mt-1 inline-flex items-center gap-2 font-tech text-[11px] uppercase tracking-[0.25em] text-amber-500/90 transition-colors hover:text-ember"
+          >
+            Browse the catalog <ArrowDown size={13} />
+          </button>
+        </div>
+      </motion.div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 opacity-50">
         <WaveVisualizer playing={playing} className="h-full w-full" />
