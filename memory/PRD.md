@@ -34,5 +34,5 @@ User choices (confirmed via questions): dark premium & cinematic direction, no c
 
 ## Backlog
 P0 — none open
-P1 — genre filter/sort in catalog (DONE 2026-09-25); server-side listening position sync (DONE 2026-09-25); book spotlight — 3D hover-steerable cover carousel with front-cover info bar (DONE 2026-09-25, replaced author spotlight per user: section promotes any catalog book; narration info remains on book cards)
+P1 — genre filter/sort in catalog (DONE 2026-09-25); server-side listening position sync (DONE 2026-09-25); book spotlight — horizontal 3D coverflow carousel (arrows, click-to-front, hover pop, auto-advance paused on hover) with front-cover info bar (DONE 2026-09-25, per user: horizontal alignment, not circular)
 P2 — real Stripe checkout (user opted waitlist-only for now); password reset UI; richer shelf analytics

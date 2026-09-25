@@ -1,33 +1,30 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Clock, Pause, Play, Plus, Star } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Clock, Pause, Play, Plus, Star } from "lucide-react";
 import { toast } from "sonner";
 import Reveal from "./Reveal";
 import { BOOKS } from "../data/books";
 import { api, getApiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 
-const STEP = 360 / BOOKS.length;
+const N = BOOKS.length;
 
 export default function BookSpotlight() {
   const stageRef = useRef(null);
-  const ringRef = useRef(null);
-  const cardRefs = useRef([]);
-  const angleRef = useRef(0);
-  const speedRef = useRef(0.12);
-  const targetRef = useRef(null);
-  const frontRef = useRef(0);
+  const hoveredRef = useRef(false);
   const audioRef = useRef(null);
-  const [front, setFront] = useState(0);
-  const [radius, setRadius] = useState(330);
+  const [index, setIndex] = useState(0);
+  const [wide, setWide] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [shelfIds, setShelfIds] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const book = BOOKS[front];
-  const cardW = radius >= 260 ? 240 : 180;
+  const book = BOOKS[index];
+  const cardW = wide ? 240 : 176;
   const cardH = Math.round(cardW * 1.5);
+  const spacing = wide ? 200 : 132;
+  const depth = wide ? 170 : 110;
 
   const fetchShelf = useCallback(() => {
     if (!user) {
@@ -45,47 +42,17 @@ export default function BookSpotlight() {
   }, [fetchShelf]);
 
   useEffect(() => {
-    const compute = () => {
-      const w = stageRef.current?.offsetWidth || 900;
-      setRadius(Math.max(200, Math.min(330, Math.round(w * 0.36))));
-    };
+    const compute = () => setWide((stageRef.current?.offsetWidth || 900) >= 640);
     compute();
     window.addEventListener("resize", compute);
     return () => window.removeEventListener("resize", compute);
   }, []);
 
   useEffect(() => {
-    let raf;
-    const apply = () => {
-      const a = angleRef.current;
-      if (ringRef.current) ringRef.current.style.transform = `rotateY(${a}deg)`;
-      cardRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const facing = Math.cos(((i * STEP + a) * Math.PI) / 180);
-        el.style.opacity = String(0.16 + 0.84 * Math.max(0, facing));
-      });
-      const idx = ((Math.round(-a / STEP) % BOOKS.length) + BOOKS.length) % BOOKS.length;
-      if (idx !== frontRef.current) {
-        frontRef.current = idx;
-        setFront(idx);
-      }
-    };
-    const tick = () => {
-      if (targetRef.current != null) {
-        const diff = targetRef.current - angleRef.current;
-        angleRef.current += diff * 0.09;
-        if (Math.abs(diff) < 0.05) {
-          angleRef.current = targetRef.current;
-          targetRef.current = null;
-        }
-      } else {
-        angleRef.current += speedRef.current;
-      }
-      apply();
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    const id = setInterval(() => {
+      if (!hoveredRef.current && !document.hidden) setIndex((i) => (i + 1) % N);
+    }, 4200);
+    return () => clearInterval(id);
   }, []);
 
   useEffect(() => {
@@ -93,28 +60,11 @@ export default function BookSpotlight() {
       audioRef.current.pause();
       setPlaying(false);
     }
-  }, [front]);
+  }, [index]);
 
   useEffect(() => () => audioRef.current?.pause(), []);
 
-  const onPointerMove = (e) => {
-    if (e.pointerType && e.pointerType !== "mouse") return;
-    const rect = stageRef.current.getBoundingClientRect();
-    const rel = (e.clientX - rect.left) / rect.width - 0.5;
-    speedRef.current = rel * 0.9;
-  };
-
-  const onPointerLeave = () => {
-    speedRef.current = 0.12;
-  };
-
-  const bringFront = (i) => {
-    const current = angleRef.current;
-    let t = -i * STEP;
-    while (t - current > 180) t -= 360;
-    while (t - current < -180) t += 360;
-    targetRef.current = t;
-  };
+  const goTo = (i) => setIndex(((i % N) + N) % N);
 
   const togglePlay = () => {
     if (!audioRef.current) {
@@ -170,8 +120,8 @@ export default function BookSpotlight() {
             <em className="font-serif-accent text-gradient-fire font-normal italic">shouting about.</em>
           </h2>
           <p className="max-w-xl text-neutral-400 sm:text-lg">
-            Hand-picked promotions from our audiobook catalog. Hover to spin the shelf, click a
-            cover to bring it front, preview it on the spot.
+            Hand-picked promotions from our audiobook catalog. Flip through the covers, click one
+            to bring it front, preview it on the spot.
           </p>
         </Reveal>
 
@@ -179,49 +129,76 @@ export default function BookSpotlight() {
           <div
             ref={stageRef}
             data-testid="spotlight-stage"
-            onPointerMove={onPointerMove}
-            onPointerLeave={onPointerLeave}
+            onPointerEnter={() => (hoveredRef.current = true)}
+            onPointerLeave={() => (hoveredRef.current = false)}
             className="relative mx-auto mt-6 w-full"
-            style={{ height: cardH + 140, perspective: "1400px", touchAction: "pan-y" }}
+            style={{ height: cardH + 140, perspective: "1600px" }}
           >
             <div
-              ref={ringRef}
               className="absolute left-1/2 top-1/2 h-0 w-0"
               style={{ transformStyle: "preserve-3d" }}
             >
-              {BOOKS.map((b, i) => (
-                <div
-                  key={b.id}
-                  ref={(el) => (cardRefs.current[i] = el)}
-                  data-testid={`spotlight-card-${b.id}`}
-                  onClick={() => bringFront(i)}
-                  className="absolute will-change-transform"
-                  style={{
-                    width: cardW,
-                    height: cardH,
-                    left: 0,
-                    top: 0,
-                    marginLeft: -cardW / 2,
-                    marginTop: -cardH / 2,
-                    transform: `rotateY(${i * STEP}deg) translateZ(${radius}px)`,
-                  }}
-                >
-                  <div className="group h-full w-full overflow-hidden rounded-2xl border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.6)] transition-transform duration-300 [transform:translateZ(0)] hover:border-ember/50 hover:[transform:translateZ(34px)]">
-                    <img
-                      src={b.cover_url}
-                      alt={`${b.title} cover`}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
-                    <span className="glass absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 font-tech text-[9px] uppercase tracking-[0.2em] text-neutral-200">
-                      {b.genre}
-                    </span>
+              {BOOKS.map((b, i) => {
+                const off = ((((i - index) % N) + N + 4) % N) - 4;
+                const visible = Math.abs(off) < 4;
+                const rot = off === 0 ? 0 : off > 0 ? -38 : 38;
+                return (
+                  <div
+                    key={b.id}
+                    data-testid={`spotlight-card-${b.id}`}
+                    onClick={() => goTo(i)}
+                    className="absolute cursor-pointer"
+                    style={{
+                      width: cardW,
+                      height: cardH,
+                      left: 0,
+                      top: 0,
+                      marginLeft: -cardW / 2,
+                      marginTop: -cardH / 2,
+                      transform: `translateX(${off * spacing}px) translateZ(${-Math.abs(off) * depth}px) rotateY(${rot}deg)`,
+                      transformStyle: "preserve-3d",
+                      opacity: visible ? 1 : 0,
+                      pointerEvents: visible ? "auto" : "none",
+                      zIndex: 50 - Math.abs(off),
+                      transition:
+                        "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease",
+                      willChange: "transform",
+                    }}
+                  >
+                    <div className="group h-full w-full overflow-hidden rounded-2xl border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.6)] transition-transform duration-300 [transform:translateZ(0)] hover:border-ember/50 hover:[transform:translateZ(40px)]">
+                      <img
+                        src={b.cover_url}
+                        alt={`${b.title} cover`}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
+                      <span className="glass absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 font-tech text-[9px] uppercase tracking-[0.2em] text-neutral-200">
+                        {b.genre}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="pointer-events-none absolute bottom-2 left-1/2 h-16 w-[70%] -translate-x-1/2 rounded-[100%] bg-ember/15 blur-3xl" />
+
+            <button
+              data-testid="spotlight-prev-btn"
+              onClick={() => goTo(index - 1)}
+              aria-label="Previous book"
+              className="absolute left-0 top-1/2 z-[60] flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-ink/60 text-neutral-200 backdrop-blur transition-colors hover:border-ember/60 hover:text-ember sm:left-6"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              data-testid="spotlight-next-btn"
+              onClick={() => goTo(index + 1)}
+              aria-label="Next book"
+              className="absolute right-0 top-1/2 z-[60] flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-ink/60 text-neutral-200 backdrop-blur transition-colors hover:border-ember/60 hover:text-ember sm:right-6"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         </Reveal>
 
