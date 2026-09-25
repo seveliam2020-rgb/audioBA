@@ -39,7 +39,7 @@ export default function Waitlist() {
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <Reveal>
-            <p className="eyebrow">04 — VIP early access</p>
+            <p className="eyebrow">05 — VIP early access</p>
             <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Be first{" "}
               <em className="font-serif-accent text-gradient-fire font-normal italic">in line.</em>

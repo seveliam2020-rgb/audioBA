@@ -23,6 +23,7 @@ export default function Navbar() {
     { label: "Catalog", hash: "#catalog", id: "nav-catalog-link" },
     { label: "Spotlight", hash: "#spotlight", id: "nav-spotlight-link" },
     { label: "Membership", hash: "#pricing", id: "nav-pricing-link" },
+    { label: "App", hash: "#app", id: "nav-app-link" },
     { label: "Waitlist", hash: "#waitlist", id: "nav-waitlist-link" },
   ];
 

@@ -4,6 +4,7 @@ import Marquee from "../components/Marquee";
 import BookSpotlight from "../components/BookSpotlight";
 import Catalog from "../components/Catalog";
 import Pricing from "../components/Pricing";
+import AppSection from "../components/AppSection";
 import Waitlist from "../components/Waitlist";
 import Footer from "../components/Footer";
 
@@ -17,6 +18,7 @@ export default function HomePage() {
         <Catalog />
         <BookSpotlight />
         <Pricing />
+        <AppSection />
         <Waitlist />
       </main>
       <Footer />

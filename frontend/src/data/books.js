@@ -5,6 +5,8 @@ export const HERO_IMAGE = img("570592fa30b73e43af822a5e3d93e28b0ca2e312d03df6104
 
 export const HERO_PNG = "/hero-headset.png";
 
+export const APP_MOCKUP = img("8a69580e9616eee42e97ef9ccba55789359657ad2870c263ef531dfad8c6bf60");
+
 export const AUTHORS = [
   {
     id: "elena-vance",

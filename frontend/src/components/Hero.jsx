@@ -1,33 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ArrowRight, Pause, Play } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import WaveVisualizer from "./WaveVisualizer";
-import { BOOKS, HERO_PNG } from "../data/books";
+import { HERO_PNG } from "../data/books";
+import StoreBadges from "./StoreBadges";
 import { scrollToSection } from "../lib/scroll";
 
 export default function Hero() {
   const ref = useRef(null);
-  const audioRef = useRef(null);
-  const [playing, setPlaying] = useState(false);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const stackY = useTransform(scrollYProgress, [0, 1], [0, 110]);
   const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
-
-  useEffect(() => () => audioRef.current?.pause(), []);
-
-  const toggleTeaser = () => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio(BOOKS[0].sample_audio);
-      audioRef.current.volume = 0.7;
-      audioRef.current.addEventListener("ended", () => setPlaying(false));
-    }
-    if (playing) {
-      audioRef.current.pause();
-      setPlaying(false);
-    } else {
-      audioRef.current.play().then(() => setPlaying(true)).catch(() => {});
-    }
-  };
 
   return (
     <section ref={ref} className="relative flex min-h-screen flex-col overflow-hidden">
@@ -98,26 +81,8 @@ export default function Hero() {
               Claim 3 months for $1.99
               <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>
-            <button
-              data-testid="hero-sample-audio-btn"
-              onClick={toggleTeaser}
-              className="inline-flex items-center gap-2.5 rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-neutral-200 transition-colors hover:border-ember/50 hover:text-white"
-            >
-              {playing ? <Pause size={14} /> : <Play size={14} />}
-              {playing ? "Playing" : "Preview"}
-              {playing && (
-                <span className="flex h-4 items-end gap-[2px]">
-                  {[0, 1, 2].map((i) => (
-                    <span
-                      key={i}
-                      className="eq-bar w-[2px] rounded-full bg-gold"
-                      style={{ height: "100%", animationDelay: `${i * 0.2}s` }}
-                    />
-                  ))}
-                </span>
-              )}
-            </button>
           </div>
+          <StoreBadges className="mt-5" />
         </div>
 
         <div className="flex flex-col items-center">
@@ -156,7 +121,7 @@ export default function Hero() {
       </motion.div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 opacity-50">
-        <WaveVisualizer playing={playing} className="h-full w-full" />
+        <WaveVisualizer className="h-full w-full" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
       </div>
     </section>
