@@ -39,9 +39,6 @@ export default function Hero() {
         className="relative flex flex-1 flex-col items-center justify-center px-6 pb-6 pt-28"
       >
         <div className="relative flex items-center justify-center">
-          <span className="glass absolute -top-5 left-1/2 z-20 hidden -translate-x-1/2 whitespace-nowrap rounded-full px-4 py-1.5 font-tech text-[10px] uppercase tracking-[0.3em] text-amber-500 md:block">
-            Audiobook distribution
-          </span>
           <h1
             data-testid="hero-wordmark"
             className="relative z-0 select-none text-center font-display text-[clamp(4.5rem,16vw,13.5rem)] font-extrabold leading-none tracking-[-0.03em]"
@@ -51,9 +48,15 @@ export default function Hero() {
                 initial={{ y: "112%" }}
                 animate={{ y: "0%" }}
                 transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                className="block bg-gradient-to-b from-[#3a3a44] via-[#232329] to-[#101014] bg-clip-text text-transparent"
+                className="relative block bg-gradient-to-b from-[#3a3a44] via-[#232329] to-[#101014] bg-clip-text text-transparent"
               >
                 BOOKLAB
+                <span
+                  aria-hidden="true"
+                  className="wordmark-shimmer pointer-events-none absolute inset-0 select-none"
+                >
+                  BOOKLAB
+                </span>
               </motion.span>
             </span>
             <span className="sr-only">Booklab Audio — audiobooks from authors worldwide</span>
@@ -117,8 +120,17 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="hidden md:block">
-          <p className="text-center font-serif-accent text-lg italic text-neutral-300">
+        <div className="flex flex-col items-center">
+          <span
+            data-testid="hero-distribution-pill"
+            className="glass rounded-full px-4 py-1.5 font-tech text-[10px] uppercase tracking-[0.3em] text-amber-500"
+          >
+            Audiobook distribution
+          </span>
+          <p
+            data-testid="hero-tagline"
+            className="mt-3 text-center font-serif-accent text-lg italic text-neutral-300"
+          >
             Precision narration. Global distribution.
           </p>
           <p className="mt-2 text-center font-tech text-[10px] uppercase tracking-[0.3em] text-neutral-600">

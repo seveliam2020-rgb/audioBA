@@ -120,6 +120,39 @@
   }
 }
 
+/* wordmark light sweep */
+@keyframes wordmark-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  26% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+.wordmark-shimmer {
+  background-image: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.32) 50%,
+    rgba(255, 184, 0, 0.2) 56%,
+    transparent 66%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: wordmark-shimmer 6.5s cubic-bezier(0.45, 0, 0.2, 1) 1.6s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wordmark-shimmer {
+    animation: none;
+  }
+}
+
 /* slow editorial marquee */
 @keyframes marquee {
   from {
