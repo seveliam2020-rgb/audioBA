@@ -32,7 +32,7 @@ export default function Pricing() {
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
         <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="eyebrow">02 — Membership</p>
+            <p className="eyebrow">03 — Membership</p>
             <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
               One membership.{" "}
               <em className="font-serif-accent text-gradient-fire font-normal italic">Every story.</em>

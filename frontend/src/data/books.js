@@ -3,6 +3,35 @@ const img = (hash) =>
 
 export const HERO_IMAGE = img("570592fa30b73e43af822a5e3d93e28b0ca2e312d03df610450b69eaaa05624a");
 
+export const AUTHORS = [
+  {
+    id: "elena-vance",
+    name: "Elena Vance",
+    role: "Sci-Fi / Cyberpunk",
+    bio: "Writes cities that hum. Neon Horizon 2099 is her fourth novel — and her first in audio.",
+    quote: "A book isn't finished until someone can live inside it with their ears.",
+    bookId: "neon-horizon-2099",
+    featured: true,
+    portrait: img("09043ed994e2c810dd93cdad0d204e25fba972f642290548987e580fe1ad26ac"),
+  },
+  {
+    id: "lyra-cross",
+    name: "Dr. Lyra Cross",
+    role: "Neuroscience",
+    bio: "A researcher who maps memory by day and myth by night, bringing Subterranean Mind to sound.",
+    bookId: "subterranean-mind",
+    portrait: img("5c4a705a682d4e16abd5592c253af6ce8c76879215798d32bb56ad483b205ff6"),
+  },
+  {
+    id: "arthur-sterling",
+    name: "Arthur Sterling",
+    role: "Gothic Thriller",
+    bio: "Three decades of quiet dread, now performed to candlelight fidelity in The Velvet Monolith.",
+    bookId: "velvet-monolith",
+    portrait: img("f057983002c47b871bfac1c2b5e208e4caeb396e00a8de63a23511ee4c92dfff"),
+  },
+];
+
 export const BOOKS = [
   {
     id: "neon-horizon-2099",

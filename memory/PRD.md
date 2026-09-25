@@ -34,5 +34,5 @@ User choices (confirmed via questions): dark premium & cinematic direction, no c
 
 ## Backlog
 P0 — none open
-P1 — genre filter/sort in catalog (DONE 2026-09-25); server-side listening position sync (DONE 2026-09-25); featured narrator spotlight
+P1 — genre filter/sort in catalog (DONE 2026-09-25); server-side listening position sync (DONE 2026-09-25); author spotlight section (DONE 2026-09-25 — per user: books are from authors who brought their titles to audio; spotlight features authors, not narrators)
 P2 — real Stripe checkout (user opted waitlist-only for now); password reset UI; richer shelf analytics
