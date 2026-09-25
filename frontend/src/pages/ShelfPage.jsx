@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, LogOut, Pause, Play, Plus, Trash2, X } from "lucide-react";
+import { ArrowLeft, LogOut, Pause, Play, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "../components/Logo";
 import Reveal from "../components/Reveal";
@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import { api, getApiError } from "../lib/api";
 
 const SPEEDS = [0.8, 1, 1.2, 1.6, 2];
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 export default function ShelfPage() {
   const { user, credits, setCredits, logout } = useAuth();
@@ -17,8 +18,15 @@ export default function ShelfPage() {
   const [playing, setPlaying] = useState(false);
   const [speedIdx, setSpeedIdx] = useState(1);
   const [progress, setProgress] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
   const audioRef = useRef(null);
+  const playingRef = useRef(false);
+  const currentRef = useRef(null);
+  const lastSaveRef = useRef(0);
   const navigate = useNavigate();
+
+  playingRef.current = playing;
+  currentRef.current = current;
 
   const load = useCallback(() => {
     api
@@ -26,6 +34,7 @@ export default function ShelfPage() {
       .then((r) => {
         setItems(r.data.items);
         setCredits(r.data.credits);
+        setCurrent((c) => c || r.data.items[0] || null);
       })
       .catch(() => {});
   }, [setCredits]);
@@ -34,25 +43,56 @@ export default function ShelfPage() {
     load();
   }, [load]);
 
+  const savePosition = useCallback((bookId, position) => {
+    if (!bookId) return;
+    api.post("/shelf/progress", { book_id: bookId, position }).catch(() => {});
+  }, []);
+
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.addEventListener("ended", () => setPlaying(false));
-      audioRef.current.addEventListener("timeupdate", () => {
-        const a = audioRef.current;
-        if (a.duration) setProgress(a.currentTime / a.duration);
-      });
-    }
-    if (current) {
-      audioRef.current.src = current.sample_audio;
-      audioRef.current.playbackRate = SPEEDS[speedIdx];
+    const a = new Audio();
+    audioRef.current = a;
+    a.addEventListener("ended", () => {
+      setPlaying(false);
       setProgress(0);
-      if (playing) audioRef.current.play().catch(() => {});
+      setElapsed(0);
+      savePosition(currentRef.current?.id, 0);
+    });
+    a.addEventListener("timeupdate", () => {
+      setElapsed(a.currentTime || 0);
+      if (a.duration) setProgress(a.currentTime / a.duration);
+      if (playingRef.current && Date.now() - lastSaveRef.current > 5000) {
+        lastSaveRef.current = Date.now();
+        savePosition(currentRef.current?.id, a.currentTime || 0);
+      }
+    });
+    return () => {
+      if (playingRef.current && currentRef.current) {
+        savePosition(currentRef.current.id, a.currentTime || 0);
+      }
+      a.pause();
+    };
+  }, [savePosition]);
+
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a || !current) return;
+    a.src = current.sample_audio;
+    a.playbackRate = SPEEDS[speedIdx];
+    const pos = current.position || 0;
+    setProgress(0);
+    setElapsed(pos);
+    if (pos > 0) {
+      const onMeta = () => {
+        if (a.duration && pos < a.duration) {
+          a.currentTime = pos;
+          setProgress(a.currentTime / a.duration);
+        }
+      };
+      a.addEventListener("loadedmetadata", onMeta, { once: true });
     }
+    if (playing) a.play().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
-
-  useEffect(() => () => audioRef.current?.pause(), []);
 
   const togglePlay = () => {
     const a = audioRef.current;
@@ -60,6 +100,7 @@ export default function ShelfPage() {
     if (playing) {
       a.pause();
       setPlaying(false);
+      savePosition(current.id, a.currentTime || 0);
     } else {
       a.playbackRate = SPEEDS[speedIdx];
       a.play().then(() => setPlaying(true)).catch(() => toast.error("Sample stream unavailable"));
@@ -184,9 +225,19 @@ export default function ShelfPage() {
               <div className="mt-8 grid gap-6 lg:grid-cols-5">
                 <div className="lg:col-span-3">
                   <div className="card-surface rounded-3xl p-6 sm:p-8">
-                    <p className="font-tech text-[10px] uppercase tracking-[0.25em] text-amber-500/90">
-                      Now playing
-                    </p>
+                    <div className="flex items-center">
+                      <p className="font-tech text-[10px] uppercase tracking-[0.25em] text-amber-500/90">
+                        Now playing
+                      </p>
+                      {current?.position > 1 && !playing && (
+                        <span
+                          data-testid="shelf-resume-chip"
+                          className="ml-auto rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-tech text-[9px] uppercase tracking-[0.2em] text-gold"
+                        >
+                          Resumes at {fmt(current.position)}
+                        </span>
+                      )}
+                    </div>
                     <div className="mt-6 flex items-center gap-5">
                       <img
                         src={(current || items[0])?.cover_url}
@@ -214,20 +265,32 @@ export default function ShelfPage() {
                       </div>
                     </div>
 
-                    <div
-                      className="mt-6 h-2 cursor-pointer overflow-hidden rounded-full bg-white/10"
-                      onClick={(e) => {
-                        const a = audioRef.current;
-                        if (!a || !a.duration) return;
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        a.currentTime = ((e.clientX - rect.left) / rect.width) * a.duration;
-                      }}
-                    >
+                    <div className="mt-6 flex items-center gap-3">
+                      <span
+                        data-testid="shelf-player-time"
+                        className="w-10 shrink-0 font-tech text-[10px] uppercase tracking-[0.15em] text-neutral-500"
+                      >
+                        {fmt(elapsed)}
+                      </span>
                       <div
-                        data-testid="shelf-player-progress"
-                        className="h-full rounded-full bg-gradient-to-r from-ember to-gold transition-[width] duration-300"
-                        style={{ width: `${Math.min(progress * 100, 100)}%` }}
-                      />
+                        className="h-2 flex-1 cursor-pointer overflow-hidden rounded-full bg-white/10"
+                        onClick={(e) => {
+                          const a = audioRef.current;
+                          if (!a || !a.duration) return;
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const t = ((e.clientX - rect.left) / rect.width) * a.duration;
+                          a.currentTime = t;
+                          setElapsed(t);
+                          lastSaveRef.current = Date.now();
+                          savePosition(currentRef.current?.id, t);
+                        }}
+                      >
+                        <div
+                          data-testid="shelf-player-progress"
+                          className="h-full rounded-full bg-gradient-to-r from-ember to-gold transition-[width] duration-300"
+                          style={{ width: `${Math.min(progress * 100, 100)}%` }}
+                        />
+                      </div>
                     </div>
 
                     <div className="mt-5 flex items-center justify-between">
@@ -267,6 +330,7 @@ export default function ShelfPage() {
                         <span className="block truncate text-sm font-semibold text-white">{item.title}</span>
                         <span className="block font-tech text-[10px] uppercase tracking-[0.15em] text-neutral-500">
                           {item.used_credit ? "Monthly credit" : `$${item.price}`}
+                          {item.position > 1 ? ` · resumes ${fmt(item.position)}` : ""}
                         </span>
                       </span>
                       {item.used_credit ? (

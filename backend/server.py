@@ -91,6 +91,11 @@ class ShelfAdd(BaseModel):
     book_id: str
 
 
+class ProgressUpdate(BaseModel):
+    book_id: str
+    position: float = Field(ge=0)
+
+
 # ---------------- Password + JWT helpers ----------------
 
 def hash_password(password: str) -> str:
@@ -403,7 +408,7 @@ async def waitlist_count():
 async def get_shelf(user: dict = Depends(get_current_user)):
     user = await reset_monthly_credit(user)
     uid = str(user["_id"])
-    items = await db.shelf.find({"user_id": uid}).sort("added_at", -1).to_list(100)
+    items = await db.shelf.find({"user_id": uid}).sort([("last_played_at", -1), ("added_at", -1)]).to_list(100)
     book_ids = [i["book_id"] for i in items]
     books = {b["id"]: b for b in await db.books.find({"id": {"$in": book_ids}}, {"_id": 0}).to_list(50)}
     out = []
@@ -415,6 +420,8 @@ async def get_shelf(user: dict = Depends(get_current_user)):
             **b,
             "used_credit": i.get("used_credit", False),
             "price": i.get("price", 0),
+            "position": i.get("position", 0),
+            "last_played_at": i.get("last_played_at"),
             "added_at": i.get("added_at"),
         })
     return {"credits": user.get("credits", 1), "items": out}
@@ -449,6 +456,17 @@ async def add_to_shelf(payload: ShelfAdd, user: dict = Depends(get_current_user)
 async def remove_from_shelf(book_id: str, user: dict = Depends(get_current_user)):
     await db.shelf.delete_one({"user_id": str(user["_id"]), "book_id": book_id})
     return {"ok": True}
+
+
+@api_router.post("/shelf/progress")
+async def save_progress(payload: ProgressUpdate, user: dict = Depends(get_current_user)):
+    result = await db.shelf.update_one(
+        {"user_id": str(user["_id"]), "book_id": payload.book_id},
+        {"$set": {"position": payload.position, "last_played_at": datetime.now(timezone.utc).isoformat()}},
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Book not on your shelf")
+    return {"ok": True, "position": payload.position}
 
 
 app.include_router(api_router)

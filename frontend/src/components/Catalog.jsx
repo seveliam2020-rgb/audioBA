@@ -1,13 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import Reveal from "./Reveal";
 import BookCard from "./BookCard";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { BOOKS } from "../data/books";
 
+const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const GENRES = ["All", ...Array.from(new Set(BOOKS.map((b) => b.genre)))];
+const SORTS = [
+  { value: "featured", label: "Featured" },
+  { value: "rating", label: "Top rated" },
+  { value: "reviews", label: "Most reviewed" },
+];
+
 export default function Catalog() {
   const { user } = useAuth();
   const [shelfIds, setShelfIds] = useState([]);
+  const [genre, setGenre] = useState("All");
+  const [sort, setSort] = useState("featured");
 
   const fetchShelf = useCallback(() => {
     if (!user) {
@@ -23,6 +34,14 @@ export default function Catalog() {
   useEffect(() => {
     fetchShelf();
   }, [fetchShelf]);
+
+  const visible = useMemo(() => {
+    let list = BOOKS.filter((b) => genre === "All" || b.genre === genre);
+    if (sort === "rating")
+      list = [...list].sort((a, b) => b.rating - a.rating || b.reviews_count - a.reviews_count);
+    if (sort === "reviews") list = [...list].sort((a, b) => b.reviews_count - a.reviews_count);
+    return list;
+  }, [genre, sort]);
 
   return (
     <section id="catalog" className="relative overflow-hidden py-24 lg:py-32">
@@ -42,17 +61,52 @@ export default function Catalog() {
         </Reveal>
 
         <Reveal delay={0.1} className="mt-6 flex items-center gap-3 font-tech text-[11px] uppercase tracking-[0.25em] text-neutral-500">
-          <span>08 titles</span>
+          <span>{String(visible.length).padStart(2, "0")} titles</span>
           <span className="h-1 w-1 rotate-45 bg-ember/60" />
-          <span>08 genres</span>
+          <span>{genre === "All" ? `${GENRES.length - 1} genres` : genre.toLowerCase()}</span>
           <span className="h-1 w-1 rotate-45 bg-ember/60" />
           <span>Tap play to preview</span>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {BOOKS.map((book, i) => (
+        <Reveal delay={0.15} className="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {GENRES.map((g) => (
+              <button
+                key={g}
+                data-testid={`genre-filter-chip-${slugify(g)}`}
+                onClick={() => setGenre(g)}
+                className={`rounded-full border px-4 py-2 font-tech text-[10px] uppercase tracking-[0.2em] transition-colors ${
+                  genre === g
+                    ? "border-transparent bg-gradient-to-r from-ember to-gold text-ink"
+                    : "border-white/15 text-neutral-400 hover:border-ember/50 hover:text-white"
+                }`}
+              >
+                {g}
+              </button>
+            ))}
+          </div>
+          <div className="relative self-start md:self-auto">
+            <select
+              data-testid="catalog-sort-select"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              aria-label="Sort catalog"
+              className="appearance-none rounded-full border border-white/15 bg-ink-surface py-2 pl-4 pr-10 font-tech text-[10px] uppercase tracking-[0.2em] text-neutral-300 transition-colors hover:border-ember/50"
+            >
+              {SORTS.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown size={14} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-500" />
+          </div>
+        </Reveal>
+
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {visible.map((book, i) => (
             <BookCard
-              key={book.id}
+              key={`${genre}-${sort}-${book.id}`}
               book={book}
               index={i}
               inShelf={shelfIds.includes(book.id)}
