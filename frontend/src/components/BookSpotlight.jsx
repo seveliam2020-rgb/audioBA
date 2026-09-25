@@ -11,7 +11,17 @@ const N = BOOKS.length;
 
 export default function BookSpotlight() {
   const stageRef = useRef(null);
+  const cardRefs = useRef([]);
   const hoveredRef = useRef(false);
+  const draggingRef = useRef(false);
+  const startPosRef = useRef(0);
+  const startClientXRef = useRef(0);
+  const dragOffsetRef = useRef(0);
+  const movedRef = useRef(false);
+  const suppressClickRef = useRef(false);
+  const velRef = useRef(0);
+  const lastXRef = useRef(0);
+  const lastTRef = useRef(0);
   const audioRef = useRef(null);
   const [index, setIndex] = useState(0);
   const [wide, setWide] = useState(true);
@@ -20,7 +30,7 @@ export default function BookSpotlight() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const book = BOOKS[index];
+  const book = BOOKS[((index % N) + N) % N];
   const cardW = wide ? 240 : 176;
   const cardH = Math.round(cardW * 1.5);
   const spacing = wide ? 200 : 132;
@@ -50,7 +60,7 @@ export default function BookSpotlight() {
 
   useEffect(() => {
     const id = setInterval(() => {
-      if (!hoveredRef.current && !document.hidden) setIndex((i) => (i + 1) % N);
+      if (!hoveredRef.current && !draggingRef.current && !document.hidden) setIndex((i) => i + 1);
     }, 4200);
     return () => clearInterval(id);
   }, []);
@@ -64,7 +74,71 @@ export default function BookSpotlight() {
 
   useEffect(() => () => audioRef.current?.pause(), []);
 
-  const goTo = (i) => setIndex(((i % N) + N) % N);
+  const applyPositions = (pos, immediate = false) => {
+    cardRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const off = ((((i - pos) % N) + N + 4) % N) - 4;
+      const visible = Math.abs(off) < 4;
+      const rot = off === 0 ? 0 : off > 0 ? -38 : 38;
+      el.style.transition = immediate
+        ? "none"
+        : "transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease";
+      el.style.transform = `translateX(${off * spacing}px) translateZ(${-Math.abs(off) * depth}px) rotateY(${rot}deg)`;
+      el.style.opacity = visible ? "1" : "0";
+      el.style.pointerEvents = visible ? "auto" : "none";
+      el.style.zIndex = String(50 - Math.abs(off));
+    });
+  };
+
+  useEffect(() => {
+    applyPositions(index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, wide]);
+
+  const onPointerDown = (e) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    draggingRef.current = true;
+    suppressClickRef.current = false;
+    movedRef.current = false;
+    startPosRef.current = index;
+    startClientXRef.current = e.clientX;
+    dragOffsetRef.current = 0;
+    velRef.current = 0;
+    lastXRef.current = e.clientX;
+    lastTRef.current = e.timeStamp;
+    stageRef.current.setPointerCapture?.(e.pointerId);
+    applyPositions(index, true);
+  };
+
+  const onPointerMove = (e) => {
+    if (!draggingRef.current) return;
+    const totalDx = e.clientX - startClientXRef.current;
+    if (Math.abs(totalDx) > 6) {
+      movedRef.current = true;
+      suppressClickRef.current = true;
+    }
+    const dt = Math.max(1, e.timeStamp - lastTRef.current);
+    velRef.current = 0.8 * velRef.current + 0.2 * ((e.clientX - lastXRef.current) / dt);
+    lastXRef.current = e.clientX;
+    lastTRef.current = e.timeStamp;
+    dragOffsetRef.current = -totalDx / spacing;
+    applyPositions(startPosRef.current + dragOffsetRef.current, true);
+  };
+
+  const settle = () => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    const raw = startPosRef.current + dragOffsetRef.current;
+    let target = Math.round(raw);
+    if (Math.abs(velRef.current) > 0.4) {
+      target = velRef.current < 0 ? Math.ceil(raw) : Math.floor(raw);
+      if (target === startPosRef.current) {
+        target = startPosRef.current + (velRef.current < 0 ? 1 : -1);
+      }
+    }
+    target = Math.min(Math.max(target, startPosRef.current - 2), startPosRef.current + 2);
+    setIndex(target);
+  };
 
   const togglePlay = () => {
     if (!audioRef.current) {
@@ -131,8 +205,12 @@ export default function BookSpotlight() {
             data-testid="spotlight-stage"
             onPointerEnter={() => (hoveredRef.current = true)}
             onPointerLeave={() => (hoveredRef.current = false)}
-            className="relative mx-auto mt-6 w-full"
-            style={{ height: cardH + 140, perspective: "1600px" }}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={settle}
+            onPointerCancel={settle}
+            className="relative mx-auto mt-6 w-full cursor-grab select-none active:cursor-grabbing"
+            style={{ height: cardH + 140, perspective: "1600px", touchAction: "pan-y" }}
           >
             <div
               className="absolute left-1/2 top-1/2 h-0 w-0"
@@ -145,8 +223,11 @@ export default function BookSpotlight() {
                 return (
                   <div
                     key={b.id}
+                    ref={(el) => (cardRefs.current[i] = el)}
                     data-testid={`spotlight-card-${b.id}`}
-                    onClick={() => goTo(i)}
+                    onClick={() => {
+                      if (!suppressClickRef.current) setIndex(index + off);
+                    }}
                     className="absolute cursor-pointer"
                     style={{
                       width: cardW,
@@ -170,6 +251,7 @@ export default function BookSpotlight() {
                         src={b.cover_url}
                         alt={`${b.title} cover`}
                         loading="lazy"
+                        draggable={false}
                         className="h-full w-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
@@ -185,7 +267,7 @@ export default function BookSpotlight() {
 
             <button
               data-testid="spotlight-prev-btn"
-              onClick={() => goTo(index - 1)}
+              onClick={() => setIndex(index - 1)}
               aria-label="Previous book"
               className="absolute left-0 top-1/2 z-[60] flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-ink/60 text-neutral-200 backdrop-blur transition-colors hover:border-ember/60 hover:text-ember sm:left-6"
             >
@@ -193,7 +275,7 @@ export default function BookSpotlight() {
             </button>
             <button
               data-testid="spotlight-next-btn"
-              onClick={() => goTo(index + 1)}
+              onClick={() => setIndex(index + 1)}
               aria-label="Next book"
               className="absolute right-0 top-1/2 z-[60] flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-ink/60 text-neutral-200 backdrop-blur transition-colors hover:border-ember/60 hover:text-ember sm:right-6"
             >
