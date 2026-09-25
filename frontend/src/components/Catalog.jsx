@@ -19,6 +19,7 @@ export default function Catalog() {
   const [shelfIds, setShelfIds] = useState([]);
   const [genre, setGenre] = useState("All");
   const [sort, setSort] = useState("featured");
+  const [wishlistIds, setWishlistIds] = useState([]);
 
   const fetchShelf = useCallback(() => {
     if (!user) {
@@ -34,6 +35,21 @@ export default function Catalog() {
   useEffect(() => {
     fetchShelf();
   }, [fetchShelf]);
+
+  const fetchWishlist = useCallback(() => {
+    if (!user) {
+      setWishlistIds([]);
+      return;
+    }
+    api
+      .get("/wishlist")
+      .then((r) => setWishlistIds(r.data.items.map((i) => i.id)))
+      .catch(() => {});
+  }, [user]);
+
+  useEffect(() => {
+    fetchWishlist();
+  }, [fetchWishlist]);
 
   const visible = useMemo(() => {
     let list = BOOKS.filter((b) => genre === "All" || b.genre === genre);
@@ -51,12 +67,12 @@ export default function Catalog() {
           <div>
             <p className="eyebrow">01 — The catalog</p>
             <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-              This month's <em className="font-serif-accent text-gradient-fire font-normal italic">pressings.</em>
+              This month's <em className="font-serif-accent text-gradient-fire font-normal italic">highlights.</em>
             </h2>
           </div>
           <p className="max-w-sm text-neutral-400 sm:text-lg">
-            Every title is remastered in 320kbps spatial audio and performed by a narrator
-            we'd follow into any story. Preview any of them, free.
+            Every title comes from an author who brought their book to audio — narrated with
+            care, in high fidelity. Preview any of them, free.
           </p>
         </Reveal>
 
@@ -111,6 +127,8 @@ export default function Catalog() {
               index={i}
               inShelf={shelfIds.includes(book.id)}
               onShelfChange={fetchShelf}
+              inWishlist={wishlistIds.includes(book.id)}
+              onWishlistChange={fetchWishlist}
             />
           ))}
         </div>

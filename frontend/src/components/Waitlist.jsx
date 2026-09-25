@@ -42,11 +42,11 @@ export default function Waitlist() {
             <p className="eyebrow">04 — VIP early access</p>
             <h2 className="mt-4 font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Be first{" "}
-              <em className="font-serif-accent text-gradient-fire font-normal italic">in the studio.</em>
+              <em className="font-serif-accent text-gradient-fire font-normal italic">in line.</em>
             </h2>
             <p className="mt-6 max-w-md text-base leading-relaxed text-neutral-400 sm:text-lg">
               Membership opens soon. Join the waitlist to lock the $1.99 intro rate before
-              the doors open — and tell us how you listen so we can tune the room.
+              the doors open — and tell us how you like to listen.
             </p>
             <div className="mt-8 flex items-center gap-3 font-tech text-[11px] uppercase tracking-[0.25em] text-neutral-500">
               <span className="h-1.5 w-1.5 animate-pulse-glow rounded-full bg-ember" />

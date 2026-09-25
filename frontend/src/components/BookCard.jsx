@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Check, Clock, Mic2, Pause, Play, Plus, Star } from "lucide-react";
+import { Check, Clock, Heart, Mic2, Pause, Play, Plus, Star } from "lucide-react";
 import { toast } from "sonner";
 import { api, getApiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 
-export default function BookCard({ book, index, inShelf, onShelfChange }) {
+export default function BookCard({ book, index, inShelf, onShelfChange, inWishlist, onWishlistChange }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [playing, setPlaying] = useState(false);
@@ -52,6 +52,26 @@ export default function BookCard({ book, index, inShelf, onShelfChange }) {
     } catch (e) {
       if (e?.response?.status === 409) toast.info("Already on your shelf");
       else toast.error(getApiError(e));
+    }
+  };
+
+  const toggleWishlist = async () => {
+    if (!user) {
+      toast.info("Sign in to save books for later");
+      navigate("/auth");
+      return;
+    }
+    try {
+      if (inWishlist) {
+        await api.delete(`/wishlist/${book.id}`);
+        toast.info("Removed from wishlist");
+      } else {
+        await api.post("/wishlist", { book_id: book.id });
+        toast.success("Saved to your wishlist — no credit spent");
+      }
+      onWishlistChange?.();
+    } catch (e) {
+      toast.error(getApiError(e));
     }
   };
 
@@ -102,7 +122,19 @@ export default function BookCard({ book, index, inShelf, onShelfChange }) {
               {book.duration}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <button
+              data-testid={`audiobook-wishlist-btn-${book.id}`}
+              onClick={toggleWishlist}
+              aria-label={inWishlist ? "Remove from wishlist" : "Save to wishlist"}
+              className={`flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${
+                inWishlist
+                  ? "border-ember bg-ember/15 text-ember"
+                  : "border-white/15 text-neutral-300 hover:border-ember/60 hover:text-ember"
+              }`}
+            >
+              <Heart size={13} className={inWishlist ? "fill-ember" : ""} />
+            </button>
             <button
               data-testid={`audiobook-play-preview-btn-${book.id}`}
               onClick={togglePlay}

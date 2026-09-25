@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Pause, Play } from "lucide-react";
+import { ArrowRight, Globe, Pause, Play } from "lucide-react";
 import WaveVisualizer from "./WaveVisualizer";
 import { BOOKS, HERO_IMAGE } from "../data/books";
 import { scrollToSection } from "../lib/scroll";
@@ -68,7 +68,7 @@ export default function Hero() {
                 animate="show"
                 className="block"
               >
-                Acoustic perfection
+                Every great book,
               </motion.span>
             </span>
             <span className="block overflow-hidden pb-3">
@@ -79,9 +79,9 @@ export default function Hero() {
                 animate="show"
                 className="block"
               >
-                meets{" "}
+                in{" "}
                 <em className="font-serif-accent text-gradient-fire font-normal italic">
-                  literary greatness.
+                  your ears.
                 </em>
               </motion.span>
             </span>
@@ -93,9 +93,9 @@ export default function Hero() {
             transition={{ duration: 0.9, delay: 0.75 }}
             className="mt-6 max-w-xl text-base leading-relaxed text-neutral-400 sm:text-lg"
           >
-            Booklab Audio is audiobook distribution engineered like studio hardware —
-            masterfully narrated stories in 320kbps spatial sound. One audiobook every
-            month, your first three for $1.99.
+            Booklab Audio distributes audiobooks from authors around the world — masterfully
+            narrated, in high-fidelity sound. One audiobook every month, your first three for
+            $1.99.
           </motion.p>
 
           <motion.div
@@ -118,7 +118,7 @@ export default function Hero() {
               className="inline-flex items-center gap-3 rounded-full border border-white/15 px-6 py-3.5 text-sm font-medium text-neutral-200 transition-colors hover:border-ember/50 hover:text-white"
             >
               {playing ? <Pause size={15} /> : <Play size={15} />}
-              {playing ? "Playing teaser" : "Listen to the teaser"}
+              {playing ? "Playing preview" : "Listen to a preview"}
               {playing && (
                 <span className="flex h-4 items-end gap-[2px]">
                   {[0, 1, 2].map((i) => (
@@ -158,33 +158,24 @@ export default function Hero() {
             transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="relative"
           >
-            <div className="absolute -inset-3 rounded-[2.2rem] bg-gradient-to-br from-ember/40 via-transparent to-gold/30 opacity-50 blur-xl" />
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
-              <img
-                src={HERO_IMAGE}
-                alt="Studio headphones with amber waveform light"
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-              <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-white/10 to-transparent" />
-            </div>
+            <div className="absolute -inset-10 bg-gradient-to-br from-ember/25 via-transparent to-gold/20 opacity-60 blur-3xl" />
+            <img
+              src={HERO_IMAGE}
+              alt="Premium headphones with an amber waveform of light"
+              className="relative aspect-[4/3] w-full object-cover [mask-image:radial-gradient(115%_115%_at_50%_45%,black_55%,transparent_80%)]"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ink to-transparent" />
 
-            <div className="glass animate-float-slow absolute -bottom-6 -left-3 flex items-center gap-4 rounded-2xl px-5 py-4 sm:-left-8">
-              <div className="flex h-6 items-end gap-[3px]">
-                {[0.9, 0.5, 1.1, 0.7, 0.4].map((d, i) => (
-                  <span
-                    key={i}
-                    className="eq-bar h-full w-[3px] rounded-full bg-gradient-to-t from-ember to-gold"
-                    style={{ animationDelay: `${d}s` }}
-                  />
-                ))}
-              </div>
+            <div className="glass animate-float-slow absolute -bottom-4 -left-3 flex items-center gap-4 rounded-2xl px-5 py-4 sm:-left-6">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-ember">
+                <Globe size={18} />
+              </span>
               <div>
                 <p className="font-tech text-[10px] uppercase tracking-[0.25em] text-amber-500">
-                  Now on the deck
+                  Global catalog
                 </p>
-                <p className="font-display text-sm font-bold text-white">{BOOKS[0].title}</p>
-                <p className="text-xs text-neutral-400">Narr. {BOOKS[0].narrator}</p>
+                <p className="font-display text-sm font-bold text-white">Authors worldwide</p>
+                <p className="text-xs text-neutral-400">Curated for audio, by Booklab Authority</p>
               </div>
             </div>
           </motion.div>

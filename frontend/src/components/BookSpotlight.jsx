@@ -7,8 +7,6 @@ import { BOOKS } from "../data/books";
 import { api, getApiError } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 
-const N = BOOKS.length;
-
 export default function BookSpotlight() {
   const stageRef = useRef(null);
   const cardRefs = useRef([]);
@@ -27,10 +25,13 @@ export default function BookSpotlight() {
   const [wide, setWide] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [shelfIds, setShelfIds] = useState([]);
+  const [promo, setPromo] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const book = BOOKS[((index % N) + N) % N];
+  const list = promo.length ? promo : BOOKS;
+  const N = list.length;
+  const book = list[((index % N) + N) % N];
   const cardW = wide ? 240 : 176;
   const cardH = Math.round(cardW * 1.5);
   const spacing = wide ? 200 : 132;
@@ -56,6 +57,15 @@ export default function BookSpotlight() {
     compute();
     window.addEventListener("resize", compute);
     return () => window.removeEventListener("resize", compute);
+  }, []);
+
+  useEffect(() => {
+    api
+      .get("/spotlight")
+      .then((r) => {
+        if (r.data.items && r.data.items.length) setPromo(r.data.items);
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -140,6 +150,17 @@ export default function BookSpotlight() {
     setIndex(target);
   };
 
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      setIndex(index - 1);
+    }
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      setIndex(index + 1);
+    }
+  };
+
   const togglePlay = () => {
     if (!audioRef.current) {
       audioRef.current = new Audio(book.sample_audio);
@@ -203,20 +224,24 @@ export default function BookSpotlight() {
           <div
             ref={stageRef}
             data-testid="spotlight-stage"
+            role="region"
+            aria-label="Book spotlight carousel — use left and right arrow keys to flip"
+            tabIndex={0}
+            onKeyDown={onKeyDown}
             onPointerEnter={() => (hoveredRef.current = true)}
             onPointerLeave={() => (hoveredRef.current = false)}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={settle}
             onPointerCancel={settle}
-            className="relative mx-auto mt-6 w-full cursor-grab select-none active:cursor-grabbing"
+            className="relative mx-auto mt-6 w-full cursor-grab select-none focus-visible:outline-none active:cursor-grabbing"
             style={{ height: cardH + 140, perspective: "1600px", touchAction: "pan-y" }}
           >
             <div
               className="absolute left-1/2 top-1/2 h-0 w-0"
               style={{ transformStyle: "preserve-3d" }}
             >
-              {BOOKS.map((b, i) => {
+              {list.map((b, i) => {
                 const off = ((((i - index) % N) + N + 4) % N) - 4;
                 const visible = Math.abs(off) < 4;
                 const rot = off === 0 ? 0 : off > 0 ? -38 : 38;

@@ -10,8 +10,8 @@ export default function Footer() {
           <div className="md:col-span-5">
             <Logo />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-neutral-400">
-              Audiobook distribution engineered like studio hardware — curated narration in
-              high-fidelity spatial sound, from Booklab Authority.
+              Audiobooks from authors around the world, distributed to listeners everywhere —
+              curated narration in high-fidelity sound, by Booklab Authority.
             </p>
             <p className="mt-6 font-tech text-[10px] uppercase tracking-[0.25em] text-neutral-600">
               $1.99/mo first 3 months · then $8.99/mo · 1 book monthly · extras $8.99

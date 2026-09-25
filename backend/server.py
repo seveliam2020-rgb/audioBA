@@ -96,6 +96,14 @@ class ProgressUpdate(BaseModel):
     position: float = Field(ge=0)
 
 
+class WishAdd(BaseModel):
+    book_id: str
+
+
+class SpotlightToggle(BaseModel):
+    spotlight: bool
+
+
 # ---------------- Password + JWT helpers ----------------
 
 def hash_password(password: str) -> str:
@@ -469,6 +477,57 @@ async def save_progress(payload: ProgressUpdate, user: dict = Depends(get_curren
     return {"ok": True, "position": payload.position}
 
 
+@api_router.get("/spotlight")
+async def get_spotlight():
+    docs = await db.books.find({"spotlight": True}, {"_id": 0}).sort("rank", 1).to_list(50)
+    return {"items": docs}
+
+
+async def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    if user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user
+
+
+@api_router.patch("/admin/books/{book_id}/spotlight")
+async def toggle_spotlight(book_id: str, payload: SpotlightToggle, user: dict = Depends(require_admin)):
+    result = await db.books.update_one({"id": book_id}, {"$set": {"spotlight": payload.spotlight}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return {"ok": True, "id": book_id, "spotlight": payload.spotlight}
+
+
+@api_router.post("/wishlist")
+async def add_wishlist(payload: WishAdd, user: dict = Depends(get_current_user)):
+    book = await db.books.find_one({"id": payload.book_id})
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    uid = str(user["_id"])
+    if await db.wishlist.find_one({"user_id": uid, "book_id": payload.book_id}):
+        raise HTTPException(status_code=409, detail="Already in your wishlist")
+    await db.wishlist.insert_one({
+        "user_id": uid,
+        "book_id": payload.book_id,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return {"ok": True}
+
+
+@api_router.get("/wishlist")
+async def get_wishlist(user: dict = Depends(get_current_user)):
+    uid = str(user["_id"])
+    items = await db.wishlist.find({"user_id": uid}).sort("created_at", -1).to_list(100)
+    book_ids = [i["book_id"] for i in items]
+    books = {b["id"]: b for b in await db.books.find({"id": {"$in": book_ids}}, {"_id": 0}).to_list(50)}
+    return {"items": [books[i["book_id"]] for i in items if i["book_id"] in books]}
+
+
+@api_router.delete("/wishlist/{book_id}")
+async def remove_wishlist(book_id: str, user: dict = Depends(get_current_user)):
+    await db.wishlist.delete_one({"user_id": str(user["_id"]), "book_id": book_id})
+    return {"ok": True}
+
+
 app.include_router(api_router)
 
 app.add_middleware(
@@ -508,7 +567,13 @@ async def startup():
     await db.login_attempts.create_index("identifier")
     await db.password_reset_tokens.create_index("expires_at", expireAfterSeconds=0)
     for b in BOOKS:
-        await db.books.update_one({"id": b["id"]}, {"$set": b}, upsert=True)
+        set_doc = {k: v for k, v in b.items() if k != "spotlight"}
+        await db.books.update_one(
+            {"id": b["id"]},
+            {"$set": set_doc, "$setOnInsert": {"spotlight": True}},
+            upsert=True,
+        )
+    await db.books.update_many({"spotlight": {"$exists": False}}, {"$set": {"spotlight": True}})
     await seed_admin(db)
     logger.info("Booklab Audio API ready")
 

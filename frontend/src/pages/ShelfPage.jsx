@@ -14,6 +14,7 @@ export default function ShelfPage() {
   const { user, credits, setCredits, logout } = useAuth();
   const [items, setItems] = useState([]);
   const [tab, setTab] = useState("listening");
+  const [wishlist, setWishlist] = useState([]);
   const [current, setCurrent] = useState(null);
   const [playing, setPlaying] = useState(false);
   const [speedIdx, setSpeedIdx] = useState(1);
@@ -36,6 +37,10 @@ export default function ShelfPage() {
         setCredits(r.data.credits);
         setCurrent((c) => c || r.data.items[0] || null);
       })
+      .catch(() => {});
+    api
+      .get("/wishlist")
+      .then((r) => setWishlist(r.data.items))
       .catch(() => {});
   }, [setCredits]);
 
@@ -127,6 +132,37 @@ export default function ShelfPage() {
     }
   };
 
+  const removeWishlist = async (bookId) => {
+    try {
+      await api.delete(`/wishlist/${bookId}`);
+      toast.info("Removed from wishlist");
+      load();
+    } catch (e) {
+      toast.error(getApiError(e));
+    }
+  };
+
+  const moveToShelf = async (b) => {
+    try {
+      const { data } = await api.post("/shelf", { book_id: b.id });
+      await api.delete(`/wishlist/${b.id}`);
+      toast.success(
+        data.used_credit
+          ? `Added with your monthly credit — ${data.credits} left this month`
+          : "Added to your shelf — $8.99"
+      );
+      load();
+    } catch (e) {
+      if (e?.response?.status === 409) {
+        toast.info("Already on your shelf — removing from wishlist");
+        await api.delete(`/wishlist/${b.id}`).catch(() => {});
+        load();
+      } else {
+        toast.error(getApiError(e));
+      }
+    }
+  };
+
   const claimNext = () => {
     navigate("/");
     setTimeout(() => {
@@ -187,10 +223,11 @@ export default function ShelfPage() {
           <span>next book $8.99</span>
         </Reveal>
 
-        <div className="mt-10 grid grid-cols-2 gap-1 sm:max-w-sm rounded-full border border-white/10 bg-ink-surface p-1 sm:grid-cols-2">
+        <div className="mt-10 grid grid-cols-3 gap-1 sm:max-w-md rounded-full border border-white/10 bg-ink-surface p-1">
           {[
             { id: "my-shelf-tab-listening", label: "Listening", value: "listening" },
             { id: "my-shelf-tab-saved", label: "Saved", value: "saved" },
+            { id: "my-shelf-tab-wishlist", label: "Wishlist", value: "wishlist" },
           ].map((t) => (
             <button
               key={t.value}
@@ -387,6 +424,49 @@ export default function ShelfPage() {
                     $8.99 flat member rate
                   </span>
                 </button>
+              </div>
+            )}
+
+            {tab === "wishlist" && (
+              <div className="mt-8 flex flex-col gap-3">
+                {wishlist.length === 0 && (
+                  <div data-testid="wishlist-empty-state" className="rounded-2xl card-surface p-8 text-center">
+                    <p className="font-display text-lg font-bold text-white">Nothing saved yet.</p>
+                    <p className="mt-1 text-sm text-neutral-400">
+                      Tap the heart on any cover to park it here — no credit spent.
+                    </p>
+                  </div>
+                )}
+                {wishlist.map((b) => (
+                  <div
+                    key={b.id}
+                    data-testid={`wishlist-item-${b.id}`}
+                    className="flex items-center gap-4 rounded-2xl card-surface p-3"
+                  >
+                    <img src={b.cover_url} alt="" className="h-12 w-12 rounded-lg object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-white">{b.title}</p>
+                      <p className="truncate font-tech text-[10px] uppercase tracking-[0.15em] text-neutral-500">
+                        {b.narrator} · {b.duration}
+                      </p>
+                    </div>
+                    <button
+                      data-testid={`wishlist-to-shelf-btn-${b.id}`}
+                      onClick={() => moveToShelf(b)}
+                      className="rounded-full bg-gradient-to-r from-ember to-gold px-4 py-2 font-display text-[11px] font-bold uppercase tracking-wide text-ink"
+                    >
+                      {credits >= 1 ? "Use credit" : "Add $8.99"}
+                    </button>
+                    <button
+                      data-testid={`wishlist-remove-btn-${b.id}`}
+                      onClick={() => removeWishlist(b.id)}
+                      aria-label={`Remove ${b.title} from wishlist`}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-neutral-400 transition-colors hover:border-ember/60 hover:text-ember"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </>

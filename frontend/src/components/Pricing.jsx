@@ -1,4 +1,4 @@
-import { AudioLines, BookOpen, Download, KeyRound, Library, Sparkles } from "lucide-react";
+import { AudioLines, BookOpen, Download, Globe, KeyRound, Library } from "lucide-react";
 import Reveal from "./Reveal";
 import { scrollToSection } from "../lib/scroll";
 
@@ -19,9 +19,9 @@ const PERKS = [
     desc: "Every audiobook you claim stays yours, even if you cancel.",
   },
   {
-    icon: Sparkles,
-    title: "Short-form originals",
-    desc: "Unlimited access to Booklab Acoustic Originals between full reads.",
+    icon: Globe,
+    title: "New titles in audio",
+    desc: "Fresh audiobooks from authors worldwide, added as they're released.",
   },
 ];
 

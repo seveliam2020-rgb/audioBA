@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import HomePage from "./pages/HomePage";
 import AuthPage from "./pages/AuthPage";
 import ShelfPage from "./pages/ShelfPage";
+import AdminPage from "./pages/AdminPage";
 import "./App.css";
 
 class ErrorBoundary extends Component {
@@ -71,6 +72,19 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
+function AdminRoute({ children }) {
+  const { user } = useAuth();
+  if (user === null) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-ink font-tech text-xs uppercase tracking-[0.3em] text-neutral-500">
+        Tuning in…
+      </div>
+    );
+  }
+  if (user === false || user.role !== "admin") return <Navigate to="/" replace />;
+  return children;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -87,6 +101,14 @@ function App() {
                 <ProtectedRoute>
                   <ShelfPage />
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminPage />
+                </AdminRoute>
               }
             />
             <Route path="*" element={<Navigate to="/" replace />} />

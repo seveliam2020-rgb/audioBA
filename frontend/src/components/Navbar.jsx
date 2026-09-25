@@ -62,13 +62,24 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-4 md:flex">
           {user ? (
-            <button
-              data-testid="nav-my-shelf-btn"
-              onClick={() => navigate("/shelf")}
-              className="rounded-full bg-gradient-to-r from-ember to-gold px-5 py-2.5 font-display text-xs font-bold uppercase tracking-wide text-ink transition-transform duration-300 hover:scale-105"
-            >
-              My Shelf
-            </button>
+            <>
+              {user.role === "admin" && (
+                <Link
+                  data-testid="nav-admin-link"
+                  to="/admin"
+                  className="font-tech text-[11px] uppercase tracking-[0.25em] text-neutral-400 transition-colors hover:text-white"
+                >
+                  Admin
+                </Link>
+              )}
+              <button
+                data-testid="nav-my-shelf-btn"
+                onClick={() => navigate("/shelf")}
+                className="rounded-full bg-gradient-to-r from-ember to-gold px-5 py-2.5 font-display text-xs font-bold uppercase tracking-wide text-ink transition-transform duration-300 hover:scale-105"
+              >
+                My Shelf
+              </button>
+            </>
           ) : (
             <>
               <Link

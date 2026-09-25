@@ -34,5 +34,6 @@ User choices (confirmed via questions): dark premium & cinematic direction, no c
 
 ## Backlog
 P0 — none open
-P1 — genre filter/sort in catalog (DONE 2026-09-25); server-side listening position sync (DONE 2026-09-25); book spotlight — horizontal 3D coverflow carousel (arrows, click-to-front, hover pop, auto-advance paused on hover, drag-to-flip with 1:1 tracking + flick momentum via pointer events) with front-cover info bar (DONE 2026-09-25, per user: horizontal alignment, not circular)
+P1 — genre filter/sort in catalog (DONE 2026-09-25); server-side listening position sync (DONE 2026-09-25); book spotlight — horizontal 3D coverflow carousel (arrows, click-to-front, hover pop, auto-advance paused on hover, drag-to-flip with 1:1 tracking + flick momentum, arrow-key browsing) with front-cover info bar (DONE 2026-09-25, per user: horizontal alignment, not circular); wishlist (heart on covers, no credit spent, shelf tab, move-to-shelf) (DONE 2026-09-25); admin spotlight picks — /admin page, role-gated PATCH, /api/spotlight feeds carousel (DONE 2026-09-25)
+P2 — copy refresh (DONE 2026-09-25, per user: positioning is audiobook distribution from authors globally, not a studio; hero headset integrated freeform — no frame — with Global Catalog badge replacing "Now on the deck")
 P2 — real Stripe checkout (user opted waitlist-only for now); password reset UI; richer shelf analytics

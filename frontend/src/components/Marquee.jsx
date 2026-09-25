@@ -1,6 +1,6 @@
 const ITEMS = [
   "High-fidelity immersion",
-  "Curated narration",
+  "Authors worldwide",
   "1 book every month",
   "Extra books $8.99",
   "Keep them forever",
