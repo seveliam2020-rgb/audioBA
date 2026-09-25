@@ -21,7 +21,7 @@ export default function Navbar() {
 
   const links = [
     { label: "Catalog", hash: "#catalog", id: "nav-catalog-link" },
-    { label: "Authors", hash: "#authors", id: "nav-authors-link" },
+    { label: "Spotlight", hash: "#spotlight", id: "nav-spotlight-link" },
     { label: "Membership", hash: "#pricing", id: "nav-pricing-link" },
     { label: "Waitlist", hash: "#waitlist", id: "nav-waitlist-link" },
   ];
