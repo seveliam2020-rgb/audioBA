@@ -1,0 +1,38 @@
+# PRD — Booklab Audio
+
+## Original Problem Statement
+"Create me an audiobook distribution website. I need to be modern looking site like the Auramax headphone website design. The name of the company is Booklab Authority but the site name will be Booklab Audio. Feature books that are audible. Pricing is $1.99 for first 3 months and $8.99 after. They can choose 1 book per month and the next one if they order another is $8.99."
+
+User choices (confirmed via questions): dark premium & cinematic direction, no checkout (waitlist email capture only), curated catalog of 8–12 titles with generated cover art + ratings + narrator info, simple signup/login with a "my shelf" member area.
+
+## Brand
+- Company: Booklab Authority — site/brand: Booklab Audio
+- Aesthetic: Auramax-style dark cinematic hardware aesthetic; titanium charcoal #0A0A0C, ember #FF5A1F, gold #FFB800; Syne display / Instrument Serif accents / Plus Jakarta Sans body / JetBrains Mono technical labels
+- Original logo mark (amber waveform bars in a titanium tile) used in nav, footer, auth and as favicon.svg
+
+## Architecture (as built 2026-09-25)
+- Backend: FastAPI (0.0.0.0:8001, all routes under /api), MongoDB via MONGO_URL/DB_NAME
+  - Auth: JWT access (15m) + refresh (7d) in httpOnly SameSite=None cookies; bcrypt hashing; brute-force lockout (5 fails / 15 min); admin seeding from env; forgot/reset-password endpoints
+  - Collections: users (email unique idx), books (seeded 8 titles), shelf, waitlist, login_attempts, password_reset_tokens
+  - Membership logic: 1 free credit per 30 days; first shelf add uses credit ($0), further adds priced $8.99; duplicate adds rejected 409
+- Frontend: CRA React 19 + Tailwind + framer-motion + lenis smooth scroll + sonner toasts
+  - Pages: HomePage (/), AuthPage (/auth), ShelfPage (/shelf, protected)
+  - Signature moments: masked line-by-line hero reveal, canvas waveform visualizer (reacts to teaser playback), parallax hero image, slow editorial marquee, bento pricing grid, glow-border waitlist card
+
+## Core Requirements → Status
+- Modern Auramax-style dark site — DONE
+- Company Booklab Authority / site Booklab Audio — DONE (nav, footer, auth, copy)
+- Featured audible books — DONE (8 titles, covers, ratings, narrators, durations, genres, playable previews)
+- Pricing $1.99 first 3 months then $8.99 — DONE (hero specs, pricing bento, waitlist, auth note)
+- 1 book/month; extra books $8.99 — DONE (credit system enforced server-side + shown in shelf)
+- Email waitlist capture — DONE (dedupe by email, live count, success state)
+- Signup/login + My Shelf — DONE (player with speed control 0.8–2.0×, listening/saved tabs, remove, claim next book, credit badge, empty states)
+
+## Verification (2026-09-25)
+- curl: register → me → shelf add (credit $0) → shelf add ($8.99) → dup 409 → bad login 401 → waitlist → admin login → logout — all pass
+- Screenshots (external preview host): desktop home 1440, mobile home 390 (overflow fixed), mobile catalog/pricing, auth page, UI register → shelf flow — all pass
+
+## Backlog
+P0 — none open
+P1 — genre filter/sort in catalog; server-side listening position sync; featured narrator spotlight
+P2 — real Stripe checkout (user opted waitlist-only for now); password reset UI; richer shelf analytics

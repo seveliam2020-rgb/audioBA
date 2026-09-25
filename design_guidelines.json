@@ -1,0 +1,237 @@
+{
+  "project_info": {
+    "brand_name": "Booklab Audio",
+    "parent_company": "Booklab Authority",
+    "aesthetic_archetype": "Awwwards Site-of-the-Day / Auramax Acoustic Hardware Aesthetic",
+    "theme_mode": "dark_cinematic",
+    "description": "High-fidelity audiobook distribution platform combining studio-grade audio engineering aesthetic with editorial typography, kinetic motion, and acoustic visualizers."
+  },
+  "typography": {
+    "font_strategy": "High-contrast architectural typography mixing ultra-bold geometric sans with delicate editorial serifs and technical mono elements.",
+    "fonts": {
+      "heading_main": "Syne, sans-serif / Outfit, sans-serif",
+      "heading_serif_accent": "Instrument Serif, serif / Cormorant Garamond, serif",
+      "body": "Plus Jakarta Sans, sans-serif",
+      "code_mono": "JetBrains Mono, monospace"
+    },
+    "scale": {
+      "hero_h1": "text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[0.95]",
+      "section_h2": "text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-none",
+      "card_h3": "text-xl sm:text-2xl font-semibold tracking-normal",
+      "body_text": "text-base sm:text-lg text-neutral-400 font-normal leading-relaxed",
+      "technical_label": "text-xs uppercase tracking-[0.25em] font-mono text-amber-500/90"
+    },
+    "rules": [
+      "NEVER use Inter or Roboto for main and sub-headings.",
+      "Always apply tight letter-spacing (tracking-tight or tracking-tighter) on text above 32px.",
+      "Use technical overlines in uppercase mono with high tracking (tracking-[0.2em])."
+    ]
+  },
+  "color_system": {
+    "archetype": "Electric Acoustic & Deep Titanium Dark",
+    "colors": {
+      "background": {
+        "primary": "#0A0A0C",
+        "surface": "#121216",
+        "surface_elevated": "#18181F",
+        "surface_glass": "rgba(18, 18, 22, 0.75)"
+      },
+      "accent": {
+        "amber_fire": "#FF5A1F",
+        "warm_gold": "#FFB800",
+        "cyan_acoustic": "#00E5FF",
+        "glow_gradient": "linear-gradient(135deg, #FF5A1F 0%, #FFB800 100%)"
+      },
+      "text": {
+        "primary": "#F4F4F6",
+        "secondary": "#A1A1AA",
+        "muted": "#71717A",
+        "contrast_highlight": "#FFFFFF"
+      },
+      "borders": {
+        "titanium_subtle": "rgba(255, 255, 255, 0.08)",
+        "amber_glow": "rgba(255, 90, 31, 0.35)",
+        "glass_border": "rgba(255, 255, 255, 0.12)"
+      }
+    },
+    "rules": [
+      "Never use pure #000000 background; use tinted deep charcoal #0A0A0C.",
+      "Gradients reserved for micro-accents, glowing borders, and visualizer elements (<15% total surface area).",
+      "High contrast WCAG AA / APCA standards maintained for all interactive elements."
+    ]
+  },
+  "surface_strategies": {
+    "glassmorphism": {
+      "nav_header": "backdrop-blur-2xl bg-[#0A0A0C]/80 border-b border-white/10 z-50 fixed top-0 w-full",
+      "floating_card": "backdrop-blur-xl bg-[#121216]/70 border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
+    },
+    "tracing_beam": "Glowing 1px moving gradient border on hover for featured audiobook cards and waitlist container.",
+    "grid_borders": "Exposed technical skeleton grids using border-white/10 for specs and pricing breakdown."
+  },
+  "craft_and_interactions": {
+    "lenis_scrolling": "Smooth momentum Lenis scroll engine integrated globally on root element.",
+    "kinetic_hero_reveal": "Signature line-by-line masked entrance reveal on page load using Framer Motion staggered clip-paths.",
+    "editorial_marquee": "Infinite smooth low-speed text ticker featuring 'BOOKLAB AUDIO • HIGH-FIDELITY IMMERSION • CURATED NARRATION • STUDIO GRADE NARRATIVE SYNTHESIS • 320KBPS UNCOMPRESSED'.",
+    "acoustic_3d_visualizer": "Interactive HTML5 Canvas / R3F dynamic audio wave visualizer responding to preview playback in hero and featured audiobooks.",
+    "spotlight_photo_treatment": "Hardware-style spotlight ray effect and clipped titanium frame borders around narrator and cover art showcases."
+  },
+  "key_features_and_content": {
+    "hero_section": {
+      "headline": "Acoustic Perfection Meets Literary Greatness.",
+      "subheadline": "Immerse yourself in masterfully narrated audiobooks, engineered for high-fidelity spatial listening.",
+      "cta": "Claim First 3 Months for $1.99",
+      "secondary_cta": "Listen to Studio Teaser"
+    },
+    "pricing_structure": {
+      "headline": "Transparent Studio Membership",
+      "intro_offer": "$1.99 / month for your first 3 months",
+      "standard_rate": "$8.99 / month thereafter",
+      "included_perks": [
+        "1 Studio-Grade Audiobook included every month",
+        "Additional audiobooks at flat $8.99 member rate (Save up to 70%)",
+        "Unlimited access to Booklab Short-Form Acoustic Originals",
+        "Lossless 320kbps Spatial Audio streaming & offline download",
+        "Keep your audiobooks forever, even if you cancel"
+      ]
+    },
+    "audiobook_catalog": {
+      "count": 8,
+      "featured_titles": [
+        {
+          "id": "book-1",
+          "title": "Neon Horizon 2099",
+          "author": "Elena Vance",
+          "narrator": "Marcus Thorne",
+          "genre": "Sci-Fi / Cyberpunk",
+          "duration": "14h 32m",
+          "rating": 4.9,
+          "reviews_count": 1840,
+          "cover_url": "https://images.pexels.com/photos/4904556/pexels-photo-4904556.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+        },
+        {
+          "id": "book-2",
+          "title": "The Silent Blade of Obsidian",
+          "author": "Kaelen Drake",
+          "narrator": "Sienna Sterling",
+          "genre": "Dark Fantasy",
+          "duration": "18h 15m",
+          "rating": 4.8,
+          "reviews_count": 2150,
+          "cover_url": "https://images.unsplash.com/photo-1787045196044-a21278b7e503?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHwyfHxkYXJrJTIwc2NpJTIwZmklMjBjeWJlcnB1bmslMjBmYW50YXN5JTIwYm9vayUyMGNvdmVyJTIwYWVzdGhldGljJTIwc3R1ZGlvJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzkwMzMyMzI4fDA&ixlib=rb-4.1.0&q=85",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+        },
+        {
+          "id": "book-3",
+          "title": "Echoes in the Acoustic Void",
+          "author": "Dr. Aris Thorne",
+          "narrator": "David Attenborough Style AI / Jonathan Pryce",
+          "genre": "Cosmic Non-Fiction",
+          "duration": "9h 45m",
+          "rating": 5.0,
+          "reviews_count": 3400,
+          "cover_url": "https://images.unsplash.com/photo-1726910133626-9b573eca70ff?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwYm9vayUyMGFydCUyMGFic3RyYWN0JTIwZGFyayUyMHRleHR1cmUlMjBlZGl0b3JpYWwlMjBwaG90b2dyYXBoeXxlbnwwfHx8fDE3OTAzMzIzMzV8MA&ixlib=rb-4.1.0&q=85",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+        },
+        {
+          "id": "book-4",
+          "title": "Chrono Resonance",
+          "author": "Maya Lin",
+          "narrator": "Devon Miller",
+          "genre": "Techno Thriller",
+          "duration": "12h 10m",
+          "rating": 4.7,
+          "reviews_count": 920,
+          "cover_url": "https://images.pexels.com/photos/7180668/pexels-photo-7180668.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+        },
+        {
+          "id": "book-5",
+          "title": "Architects of Silence",
+          "author": "Julian Mercer",
+          "narrator": "Clara Higgins",
+          "genre": "Psychological Fiction",
+          "duration": "11h 05m",
+          "rating": 4.9,
+          "reviews_count": 1420,
+          "cover_url": "https://images.pexels.com/photos/11999621/pexels-photo-11999621.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
+        },
+        {
+          "id": "book-6",
+          "title": "The Golden Frequency",
+          "author": "Sebastian Vance",
+          "narrator": "Oliver Grant",
+          "genre": "History & Mystery",
+          "duration": "16h 40m",
+          "rating": 4.8,
+          "reviews_count": 1890,
+          "cover_url": "https://images.unsplash.com/photo-1760805914287-2a938ec5f84e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHw0fHxkYXJrJTIwc2NpJTIwZmklMjBjeWJlcnB1bmslMjBmYW50YXN5JTIwYm9vayUyMGNvdmVyJTIwYWVzdGhldGljJTIwc3R1ZGlvJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzkwMzMyMzI4fDA&ixlib=rb-4.1.0&q=85",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
+        },
+        {
+          "id": "book-7",
+          "title": "Subterranean Mind",
+          "author": "Dr. Lyra Cross",
+          "narrator": "Evelyn Reed",
+          "genre": "Neuroscience & Mind",
+          "duration": "8h 50m",
+          "rating": 4.9,
+          "reviews_count": 2780,
+          "cover_url": "https://images.unsplash.com/photo-1515894977336-a5bff1d16c4b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwzfHxtaW5pbWFsaXN0JTIwYm9vayUyMGFydCUyMGFic3RyYWN0JTIwZGFyayUyMHRleHR1cmUlMjBlZGl0b3JpYWwlMjBwaG90b2dyYXBoeXxlbnwwfHx8fDE3OTAzMzIzMzV8MA&ixlib=rb-4.1.0&q=85",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"
+        },
+        {
+          "id": "book-8",
+          "title": "The Velvet Monolith",
+          "author": "Arthur Sterling",
+          "narrator": "Benjamin Cross",
+          "genre": "Gothic Thriller",
+          "duration": "13h 25m",
+          "rating": 4.8,
+          "reviews_count": 1650,
+          "cover_url": "https://images.unsplash.com/photo-1779912217758-f334564f8502?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHwxfHxkYXJrJTIwc2NpJTIwZmklMjBjeWJlcnB1bmslMjBmYW50YXN5JTIwYm9vayUyMGNvdmVyJTIwYWVzdGhldGljJTIwc3R1ZGlvJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzkwMzMyMzI4fDA&ixlib=rb-4.1.0&q=85",
+          "sample_audio": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+        }
+      ]
+    },
+    "waitlist_feature": "Interactive VIP Early-Access form collecting email, listening preference (Headphones, Hi-Fi Speakers, Commute), with immediate confetti toast feedback.",
+    "member_area_my_shelf": "Interactive portal featuring: Currently Listening (with interactive progress, audio player widget, playback speed 0.8x-2.0x), Saved Wishlist, Monthly Credit Balance badge (1 Credit / Month), and Claim Next Book option ($8.99)."
+  },
+  "media_assets": {
+    "studio_headphone_hero": "https://images.pexels.com/photos/13984365/pexels-photo-13984365.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "studio_microphone_spotlight": "https://images.pexels.com/photos/6185147/pexels-photo-6185147.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "stage_acoustic_mic": "https://images.unsplash.com/photo-1507676385008-e7fb562d11f8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODd8MHwxfHNlYXJjaHxfHxoZWFkcGhvbmUlMjBhdWRpbyUyMGFjb3VzdGljJTIwZGFyayUyMHN0dWRpbyUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzkwMzMyMzE4fDA&ixlib=rb-4.1.0&q=85"
+  },
+  "testing_attributes": {
+    "rule": "ALL interactive components, buttons, inputs, links, and key indicators MUST contain descriptive kebab-case data-testid attributes.",
+    "key_test_ids": [
+      "nav-brand-logo",
+      "nav-catalog-link",
+      "nav-pricing-link",
+      "nav-waitlist-link",
+      "nav-my-shelf-btn",
+      "hero-waitlist-cta",
+      "hero-sample-audio-btn",
+      "audiobook-card-{id}",
+      "audiobook-play-preview-btn-{id}",
+      "audiobook-add-shelf-btn-{id}",
+      "pricing-subscribe-btn",
+      "waitlist-email-input",
+      "waitlist-preference-select",
+      "waitlist-submit-btn",
+      "my-shelf-tab-listening",
+      "my-shelf-tab-saved",
+      "my-shelf-player-toggle",
+      "my-shelf-speed-btn"
+    ]
+  },
+  "instructions_for_main_agent": [
+    "Install and verify lenis smooth scroll or import Lenis for high-end scroll feeling.",
+    "Ensure the hero section features a masked line-by-line reveal with Framer Motion and an audio wave canvas visualizer.",
+    "Create an interactive audio drawer or modal player so users can listen to actual audio samples from any of the 8 books.",
+    "Provide a sleek modal/drawer for 'My Shelf' with local storage persistence for saved/purchased books.",
+    "Ensure pricing ($1.99 first 3 months, $8.99 after, 1 choice/mo + $8.99 additions) is highlighted in a high-density bento grid.",
+    "All interactive elements must have clear focus, hover, and active states with appropriate data-testid attributes."
+  ]
+}

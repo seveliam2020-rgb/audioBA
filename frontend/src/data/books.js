@@ -1,0 +1,118 @@
+const img = (hash) =>
+  `https://static.prod-images.emergentagent.com/jobs/2a50c63c-7b7b-4527-80d9-fc8281119b8b/images/${hash}.jpeg`;
+
+export const HERO_IMAGE = img("570592fa30b73e43af822a5e3d93e28b0ca2e312d03df610450b69eaaa05624a");
+
+export const BOOKS = [
+  {
+    id: "neon-horizon-2099",
+    title: "Neon Horizon 2099",
+    author: "Elena Vance",
+    narrator: "Marcus Thorne",
+    genre: "Cyberpunk",
+    duration: "14h 32m",
+    rating: 4.9,
+    reviews_count: 1840,
+    synopsis:
+      "In a city that never sleeps, a rogue signal-jockey discovers the frequency that could reboot civilization.",
+    cover_url: img("d435987be390656d9d9b4daeb88c845fa592a693823c91d57179fc5755fd2123"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  },
+  {
+    id: "silent-blade-obsidian",
+    title: "The Silent Blade of Obsidian",
+    author: "Kaelen Drake",
+    narrator: "Sienna Sterling",
+    genre: "Dark Fantasy",
+    duration: "18h 15m",
+    rating: 4.8,
+    reviews_count: 2150,
+    synopsis:
+      "A disgraced blade-sworn must carve her name back into history — one shadow at a time.",
+    cover_url: img("5f0264e9198ef23e30e057d16ead935ba3a1d09b5e7739e17db7d268f79b963c"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  },
+  {
+    id: "echoes-acoustic-void",
+    title: "Echoes in the Acoustic Void",
+    author: "Dr. Aris Thorne",
+    narrator: "Jonathan Pryce",
+    genre: "Cosmic Non-Fiction",
+    duration: "9h 45m",
+    rating: 5.0,
+    reviews_count: 3400,
+    synopsis:
+      "An awe-struck tour of the soundscapes of deep space, from pulsar drums to the hum of the early universe.",
+    cover_url: img("42a238417bc99c0a7a44b4b15a4e049718818cace36a580deed2da4d6b193ca6"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  },
+  {
+    id: "chrono-resonance",
+    title: "Chrono Resonance",
+    author: "Maya Lin",
+    narrator: "Devon Miller",
+    genre: "Techno Thriller",
+    duration: "12h 10m",
+    rating: 4.7,
+    reviews_count: 920,
+    synopsis:
+      "A quantum clock leaks twelve minutes into the future — and someone is already spending them.",
+    cover_url: img("af59f362f4b0b31241691d40baf6cd7b9db799f8421be361d1f2b578eb91edc4"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+  },
+  {
+    id: "architects-of-silence",
+    title: "Architects of Silence",
+    author: "Julian Mercer",
+    narrator: "Clara Higgins",
+    genre: "Psych Fiction",
+    duration: "11h 05m",
+    rating: 4.9,
+    reviews_count: 1420,
+    synopsis:
+      "A sound designer retreats into a brutalist tower to record silence, and finds it listening back.",
+    cover_url: img("480d1b6aced4852df6684f99d176e82c6f3ea66f8850a50e1b13222151691528"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+  },
+  {
+    id: "golden-frequency",
+    title: "The Golden Frequency",
+    author: "Sebastian Vance",
+    narrator: "Oliver Grant",
+    genre: "History & Mystery",
+    duration: "16h 40m",
+    rating: 4.8,
+    reviews_count: 1890,
+    synopsis:
+      "A coded broadcast hidden in a 1930s radio dial leads a historian into the century's strangest mystery.",
+    cover_url: img("be3c2f3d77adf3c375f675dfdc32f6f42dc5682967f147c7ae5b302ba923cf5a"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+  },
+  {
+    id: "subterranean-mind",
+    title: "Subterranean Mind",
+    author: "Dr. Lyra Cross",
+    narrator: "Evelyn Reed",
+    genre: "Neuroscience",
+    duration: "8h 50m",
+    rating: 4.9,
+    reviews_count: 2780,
+    synopsis: "Descend into the living cave of neurons where memory, myth and mechanics entwine.",
+    cover_url: img("fff45bae55c311d0db3d848c6ba89d7fab56f714bb4fb8e81f29321621757193"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+  },
+  {
+    id: "velvet-monolith",
+    title: "The Velvet Monolith",
+    author: "Arthur Sterling",
+    narrator: "Benjamin Cross",
+    genre: "Gothic Thriller",
+    duration: "13h 25m",
+    rating: 4.8,
+    reviews_count: 1650,
+    synopsis:
+      "When the monolith appears in the forest, the village's oldest secret begins to speak.",
+    cover_url: img("683ff460391bcc71276824f76fb74249a2607477c1a45925c0109c02e2bfd257"),
+    sample_audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+  },
+];
